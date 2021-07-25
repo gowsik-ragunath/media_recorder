@@ -1,0 +1,10 @@
+<div data-controller="media-recorder">
+
+	<button class="" id="recordBtn" data-media-recorder-target="recordBtn" data-action="media-recorder#start_recording">Record</button>
+	<button class="" id="stopBtn" data-media-recorder-target="stopBtn">Stop</button>
+
+	<video id="preview" data-media-recorder-target="preview" controls></video> 
+
+	<%= form_with model: [recording, message] do |f| %>
+	<% end %>
+</div>

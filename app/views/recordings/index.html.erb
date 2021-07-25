@@ -1,0 +1,3 @@
+<% @recordings.each_with_index do |recording, index| %>
+	<% link_to "recording - #{index}", recording_path(recording) %>
+<% end %>

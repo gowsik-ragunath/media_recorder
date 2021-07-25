@@ -1,0 +1,5 @@
+<% @messages.each do |message| %>
+	<%= message %>
+<% end %>
+
+<%= render partial: "messages/new", locals: { recording: @recording, message: @recording.messages.new } %>
