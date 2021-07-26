@@ -1,49 +1,65 @@
 import { Controller } from "stimulus"
 
 export default class extends Controller {
-  static targets = [ "recordBtn", "stopBtn", "preview" ]
+  static targets = [ "cameraRecordBtn", "screenRecordBtn", "stopBtn", "preview" ]
 
   connect() {
   }
 
-  start_recording() {
+  start_camera_recording() {
     var preview = this.previewTarget;
 
+    var constraints = { audio: true, video: { width: 1280, height: 720 } };
 
-    function get_recording() {
-      // Prefer camera resolution nearest to 1280x720.
-      var constraints = { audio: true, video: { width: 1280, height: 720 } };
+    var result = navigator.mediaDevices.getUserMedia(constraints)
+    .then(function(mediaStream) {
+      window.mediaStream = mediaStream;
+      var video = preview;
+      console.log(video);
+      video.srcObject = mediaStream;
+      video.onloadedmetadata = function(e) {
+        video.play();
+      };
+    }).then(() => {
+      this.record_media();
+    }).catch(err => {})
+  }
 
-      var result = navigator.mediaDevices.getUserMedia(constraints)
-      .then(function(mediaStream) {
-        window.mediaStream = mediaStream;
-        var video = preview;
-        console.log(video);
-        video.srcObject = mediaStream;
-        video.onloadedmetadata = function(e) {
-          video.play();
-        };
+  start_screen_recording() {
+    var preview = this.previewTarget;
 
-        return Promise.resolve('Success')
+    const constraints = {
+      video: {
+        cursor: "always"
+      },
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        sampleRate: 44100
       }
-      )
-      .catch(function(err) { 
-        console.log(err.name + ": " + err.message); 
-        return Promise.reject('error')
-      });
+    }
 
+    var result = navigator.mediaDevices.getDisplayMedia(constraints)
+    .then(function(mediaStream) {
+      window.mediaStream = mediaStream;
+      var video = preview;
+      console.log(video);
+      video.srcObject = mediaStream;
+      video.onloadedmetadata = function(e) {
+        video.play();
+      };
+    }).then(() => {
+      this.record_media();
+    }).catch(err => {})
+  }
 
-      console.log(result);
-      return result;
-      }
-
-    get_recording().then(() => {
+  record_media() {
       var options = { mimeType: "video/webm" };
       var recordedChunks = [];
       var mediaRecorder = new MediaRecorder(window.mediaStream, options);
+      mediaRecorder.start(); // create a video chunk every 15 seconds
 
       mediaRecorder.ondataavailable = handleDataAvailable;
-      mediaRecorder.start();
 
       function handleDataAvailable(event) {
         console.log("data-available");
@@ -69,15 +85,16 @@ export default class extends Controller {
         window.URL.revokeObjectURL(url);
       }
 
+      this.stopBtnTarget.addEventListener("click", function() {
+        console.log("------")
+        mediaRecorder.stop();
+      })
+
       // demo: to download after 9sec
       setTimeout(event => {
         console.log("stopping");
         mediaRecorder.stop();
       }, 9000);
-    }).
-    catch({
-
-    })
-  }
+    }
 
 }
