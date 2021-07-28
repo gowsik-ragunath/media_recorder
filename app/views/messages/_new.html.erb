@@ -4,8 +4,21 @@
 	<button class="" id="screenRecordBtn" data-media-recorder-target="screenRecordBtn" data-action="media-recorder#start_screen_recording">Start Screen Record</button>
 	<button class="" id="stopBtn" data-media-recorder-target="stopBtn">Stop</button>
 
-	<video id="preview" data-media-recorder-target="preview" controls></video> 
+	<div>
+		<video id="preview" data-media-recorder-target="preview" height="720" width="1280" controls></video> 
+	</div>
 
-	<%= form_with model: [recording, message] do |f| %>
-	<% end %>
+	<div>
+		<%= form_with model: [recording, message] do |f| %>
+			<div>
+				<%= f.file_field :media, direct_upload: true, data: { "media-recorder-target": "media" } %>
+			</div>
+
+			<%= f.hidden_field :recording_id, value: @recording.id %>
+
+			<div>
+				<%= f.submit %>
+			</div>
+		<% end %>
+	</div>
 </div>

@@ -1,5 +1,7 @@
 <% @messages.each do |message| %>
-	<%= message %>
+	<video width="480" height="640" controls>
+		<source src="<%= rails_blob_url(message.media) %>" type="video/mp4">
+	</video>
 <% end %>
 
 <%= render partial: "messages/new", locals: { recording: @recording, message: @recording.messages.new } %>

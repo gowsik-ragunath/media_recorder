@@ -1,7 +1,9 @@
 import { Controller } from "stimulus"
 
+import RailsDirectUpload from './rails_direct_upload'
+
 export default class extends Controller {
-  static targets = [ "cameraRecordBtn", "screenRecordBtn", "stopBtn", "preview" ]
+  static targets = [ "cameraRecordBtn", "screenRecordBtn", "stopBtn", "preview", "media" ]
 
   connect() {
   }
@@ -56,17 +58,26 @@ export default class extends Controller {
   record_media() {
       var options = { mimeType: "video/webm" };
       var recordedChunks = [];
+      var preview = this.previewTarget;
+      var blob, url;
+      url = this.mediaTarget.dataset.directUploadUrl;
       var mediaRecorder = new MediaRecorder(window.mediaStream, options);
       mediaRecorder.start(); // create a video chunk every 15 seconds
 
       mediaRecorder.ondataavailable = handleDataAvailable;
 
       function handleDataAvailable(event) {
-        console.log("data-available");
         if (event.data.size > 0) {
+          
           recordedChunks.push(event.data);
-          console.log(recordedChunks);
-          download();
+          
+          blob = new Blob(recordedChunks, { type: "video/webm" })
+
+          blob.lastModifiedDate = new Date();
+          blob.name = "recording.webm"
+
+          var initialize_upload = new RailsDirectUpload();
+          initialize_upload.uploadFile(blob, url);
         } else {
           // ...
         }
@@ -88,13 +99,8 @@ export default class extends Controller {
       this.stopBtnTarget.addEventListener("click", function() {
         console.log("------")
         mediaRecorder.stop();
+        if(preview) preview.stop();
       })
-
-      // demo: to download after 9sec
-      setTimeout(event => {
-        console.log("stopping");
-        mediaRecorder.stop();
-      }, 9000);
     }
 
 }

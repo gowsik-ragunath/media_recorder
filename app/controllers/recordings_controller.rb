@@ -12,7 +12,7 @@ class RecordingsController < ApplicationController
 
 		respond_to do |format|
 			if @recording.save
-				format.html { redirect_to action: "show", id: @recording.id } # index.html.erb
+				format.html { redirect_to action: "show", id: @recording.id }
 			else
 				format.html { redirect_to action: 'index' }
 			end
