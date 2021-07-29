@@ -1,14 +1,17 @@
-<div data-controller="media-recorder">
+<div data-controller="media-recorder" class="messageForm">
 
 	<button class="" id="cameraRecordBtn" data-media-recorder-target="cameraRecordBtn" data-action="media-recorder#start_camera_recording">Start Camera Record</button>
 	<button class="" id="screenRecordBtn" data-media-recorder-target="screenRecordBtn" data-action="media-recorder#start_screen_recording">Start Screen Record</button>
 	<button class="" id="stopBtn" data-media-recorder-target="stopBtn">Stop</button>
 
 	<div>
-		<video id="preview" data-media-recorder-target="preview" height="720" width="1280" controls></video> 
+		<video id="preview" data-media-recorder-target="preview" height="360" width="480" controls></video> 
 	</div>
 
 	<div>
+
+		<div id="progressBar"></div>
+
 		<%= form_with model: [recording, message] do |f| %>
 			<div>
 				<%= f.file_field :media, direct_upload: true, data: { "media-recorder-target": "media" } %>

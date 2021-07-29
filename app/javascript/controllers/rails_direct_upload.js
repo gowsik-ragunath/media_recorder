@@ -9,6 +9,10 @@ export default class RailsDirectUpload {
     // your form needs the file_field direct_upload: true, which
     //  provides data-direct-upload-url
 
+    var progressBar = document.querySelector("#progressBar");
+
+    progressBar.innerHTML = "Upload inprogress"
+
 
     const uploader = new DirectUpload(file, url) 
     uploader.create((error, blob) => {
@@ -25,7 +29,22 @@ export default class RailsDirectUpload {
         hiddenField.setAttribute("value", blob.signed_id);
         hiddenField.name = "message[media]"
         document.querySelector('form').appendChild(hiddenField)
+
+        progressBar.innerHTML = "Upload completed"
       }
     })
+  }
+
+  directUploadWillStoreFileWithXHR(request) {
+    console.log("*************")
+    request.upload.addEventListener("progress",
+      event => this.directUploadDidProgress(event))
+  }
+
+  directUploadDidProgress(event) {
+    console.log("----------------")
+    console.log(event)
+    let percent = ((event.loaded / event.total) / 100).to_fixed(1);
+
   }
 }
